@@ -15,7 +15,8 @@ class PysimScene extends Scene {
         this.camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 20, new BABYLON.Vector3(0,0.1,0), this.scene);
         // this.camera.setPosition(new BABYLON.Vector3(-0.02, 2.278,2.24));
         // this.camera.setPosition(new BABYLON.Vector3(0.81, 0.82,1.6));
-        this.camera.setPosition(new BABYLON.Vector3(2.2, 1.7, 2.5));
+        // this.camera.setPosition(new BABYLON.Vector3(2.2, 1.7, 2.5));
+        this.camera.setPosition(new BABYLON.Vector3(0.02, 1.11, 2.3));
         this.camera.attachControl(this.canvas, true);
         // console.log(this.camera.inputs.attached)
         this.camera.inputs.attached.keyboard.detachControl()
@@ -67,7 +68,7 @@ class PysimScene extends Scene {
         this.ui.addControl(this.textbox_title);
 
         // --- Coordinate System ---
-        this.drawCoordinateSystem(0.25)
+        //this.drawCoordinateSystem(0.25)
 
         // --- GENERATION OF OBJECTS ---
         this.buildWorld()
@@ -143,6 +144,7 @@ class PysimScene extends Scene {
 
     // -----------------------------------------------------------------------------------------------------------------
     onSample(sample) {
+        // console.log(this.camera.position)
         if ('world' in sample){
             for (const [key, value] of Object.entries(sample['world']['objects'])){
                 if (key in world_objects){

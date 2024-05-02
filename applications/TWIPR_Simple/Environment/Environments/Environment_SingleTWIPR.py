@@ -4,10 +4,10 @@ from scioi_py_core.core.obstacles import CuboidObstacle_3D
 from scioi_py_core.utils.joystick.joystick import Joystick
 from scioi_py_core.utils.joystick.keyboard import ArrowKeys
 
+
 class Environment_SingleTWIPR(EnvironmentBase):
     agent1: TWIPR_DynamicAgent
     obstacle1: CuboidObstacle_3D
-    keys: ArrowKeys
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -19,7 +19,7 @@ class Environment_SingleTWIPR(EnvironmentBase):
 
     def action_controller(self, *args, **kwargs):
         super().action_controller(*args, **kwargs)
-        self.agent1.input = [-1*self.joystick.axis[1], -4*self.joystick.axis[2]]
+        self.agent1.input = [-1 * self.joystick.axis[1], -4 * self.joystick.axis[2]]
         pass
 
 
@@ -38,8 +38,6 @@ class Environment_SingleTWIPR_KeyboardInput(EnvironmentBase):
 
     def action_controller(self, *args, **kwargs):
         super().action_controller(*args, **kwargs)
-        self.agent1.input = [2*(self.keys.keys['UP']-self.keys.keys['DOWN']), 5*(self.keys.keys['LEFT']-self.keys.keys['RIGHT'])]
+        self.agent1.input = [2 * (self.keys.keys['UP'] - self.keys.keys['DOWN']),
+                             5 * (self.keys.keys['LEFT'] - self.keys.keys['RIGHT'])]
         pass
-
-
-

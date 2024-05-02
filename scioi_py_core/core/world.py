@@ -485,7 +485,7 @@ class World(scheduling.ScheduledObject):
                                 if not (any(isinstance(collision_object, exclude_class) for exclude_class in
                                             obj.collision.settings.excludes)):
                                     # do proximity sphere check
-                                    if obj.physics.collisionCheck(collision_object.physics):
+                                    # if obj.physics.collisionCheck(collision_object.physics):
                                         ...
 
     def _init(self):

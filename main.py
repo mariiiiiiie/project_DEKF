@@ -5,10 +5,10 @@ keyboard = Controller()
 DoubleShot = False
 shot = False
 
-
 def on_press(key):
     global DoubleShot
     global shot
+    print("salut")
 
     if Key.up == key:
         print("UP")

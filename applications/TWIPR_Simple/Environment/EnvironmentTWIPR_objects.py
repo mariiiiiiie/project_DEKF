@@ -270,6 +270,23 @@ class TWIPR_PhysicalObject(core.physics.PhysicalBody):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+class TWIPR_2D_InputSpace(core.spaces.Space):
+    dimensions = [core.spaces.ScalarDimension(name='M')]
+
+
+class TWIPR_2D_StateSpace_4D(core.spaces.Space):
+    dimensions = [core.spaces.ScalarDimension(name='s'),
+                  core.spaces.ScalarDimension(name='v'),
+                  core.spaces.ScalarDimension(name='theta'),
+                  core.spaces.ScalarDimension(name='theta_dot')]
+
+
+class TWIPR_2D_StateSpace_5D(core.spaces.Space):
+    dimensions = [core.spaces.ScalarDimension(name='x'),
+                  core.spaces.ScalarDimension(name='y'),
+                  core.spaces.ScalarDimension(name='v'),
+                  core.spaces.ScalarDimension(name='theta'),
+                  core.spaces.ScalarDimension(name='theta_dot')]
 
 
 class TWIPR_3D_InputSpace(core.spaces.Space):
@@ -429,6 +446,101 @@ class TWIPR_2D_Linear:
         self.sys_disc = control.StateSpace(self.A_hat_d, self.B_d, self.C_d, self.D_d, self.Ts,
                                            remove_useless_states=False)
         return self.K_disc
+
+
+class TWIPR_2D_Nonlinear(core.dynamics.Dynamics):
+    state_space = TWIPR_3D_StateSpace_7D()
+    input_space = TWIPR_3D_InputSpace()
+    output_space = TWIPR_3D_StateSpace_7D()
+    model: TwiprModel
+
+    # == INIT ==========================================================================================================
+    def __init__(self, model: TwiprModel, Ts, poles=None, nominal_model=None):
+        self.model = model
+
+        if nominal_model is None:
+            self.linear_dynamics = TWIPR_2D_Linear(model=model, Ts=Ts, poles=poles)
+        else:
+            self.linear_dynamics = TWIPR_2D_Linear(model=nominal_model, Ts=Ts, poles=poles)
+        self.q = 1
+        self.p = 1
+        self.n = 4
+
+        super().__init__(Ts=Ts, state_space=TWIPR_2D_StateSpace, input_space=TWIPR_2D_InputSpace)
+
+        self.K = self.linear_dynamics.K
+
+    # == PROPERTIES ====================================================================================================
+
+    # == PRIVATE METHODS ===============================================================================================
+    def _dynamics(self, state, input):
+        g = 9.81
+
+        s = state[0]
+        v = state[1]
+        theta = state[2]
+        theta_dot = state[3]
+
+        u = input - self.K @ state
+
+        C_12 = (self.model.I_y + self.model.m_b * self.model.l ** 2) * self.model.m_b * self.model.l
+        C_22 = self.model.m_b ** 2 * self.model.l ** 2 * np.cos(theta)
+        C_21 = (
+                       self.model.m_b + 2 * self.model.m_w + 2 * self.model.I_w / self.model.r_w ** 2) * self.model.m_b * self.model.l
+        V_1 = (self.model.m_b + 2 * self.model.m_w + 2 * self.model.I_w / self.model.r_w ** 2) * (
+                self.model.I_y + self.model.m_b * self.model.l ** 2) - self.model.m_b ** 2 * self.model.l ** 2 * np.cos(
+            theta) ** 2
+        D_22 = (
+                       self.model.m_b + 2 * self.model.m_w + 2 * self.model.I_w / self.model.r_w ** 2) * 2 * self.model.c_alpha + self.model.m_b * self.model.l * np.cos(
+            theta) * 2 * self.model.c_alpha / self.model.r_w
+        D_21 = (
+                       self.model.m_b + 2 * self.model.m_w + 2 * self.model.I_w / self.model.r_w ** 2) * 2 * self.model.c_alpha / self.model.r_w + self.model.m_b * self.model.l * np.cos(
+            theta) * 2 * self.model.c_alpha / self.model.r_w ** 2
+        C_11 = self.model.m_b ** 2 * self.model.l ** 2 * np.cos(theta)
+        D_12 = (
+                       self.model.I_y + self.model.m_b * self.model.l ** 2) * 2 * self.model.c_alpha / self.model.r_w - self.model.m_b * self.model.l * np.cos(
+            theta) * 2 * self.model.c_alpha
+        D_11 = (
+                       self.model.I_y + self.model.m_b * self.model.l ** 2) * 2 * self.model.c_alpha / self.model.r_w ** 2 - 2 * self.model.m_b * self.model.l * np.cos(
+            theta) * self.model.c_alpha / self.model.r_w
+        B_2 = self.model.m_b * self.model.l / self.model.r_w * np.cos(
+            theta) + self.model.m_b + 2 * self.model.m_w + 2 * self.model.I_w / self.model.r_w ** 2
+        B_1 = (
+                      self.model.I_y + self.model.m_b * self.model.l ** 2) / self.model.r_w + self.model.m_b * self.model.l * np.cos(
+            theta)
+        C_31 = 2 * (self.model.I_z - self.model.I_x - self.model.m_b * self.model.l ** 2) * np.cos(theta)
+        C_32 = self.model.m_b * self.model.l
+        D_33 = self.model.d_w ** 2 / (2 * self.model.r_w ** 2) * self.model.c_alpha
+        V_2 = self.model.I_z + 2 * self.model.I_w2 + (
+                self.model.m_w + self.model.I_w / self.model.r_w ** 2) * self.model.d_w ** 2 / 2 - (
+                      self.model.I_z - self.model.I_x - self.model.m_b * self.model.l ** 2) * np.sin(theta) ** 2
+        B_3 = self.model.d_w / (2 * self.model.r_w)
+        C_13 = (
+                       self.model.I_y + self.model.m_b * self.model.l ** 2) * self.model.m_b * self.model.l + self.model.m_b * self.model.l * (
+                       self.model.I_z - self.model.I_x - self.model.m_b * self.model.l ** 2) * np.cos(theta) ** 2
+        C_23 = (self.model.m_b ** 2 * self.model.l ** 2 + (
+                self.model.m_b + 2 * self.model.m_w + 2 * self.model.I_w / self.model.r_w ** 2) * (
+                        self.model.I_z - self.model.I_x - self.model.m_b * self.model.l ** 2)) * np.cos(theta)
+
+        state_dot = np.zeros(self.n)
+
+        state_dot[0] = v
+        state_dot[1] = np.sin(theta) / V_1 * (
+                    -C_11 * g + C_12 * theta_dot ** 2) - D_11 / V_1 * v + D_12 / V_1 * theta_dot + B_1 / V_1 * u[
+                           0] - self.model.tau_x * v
+        state_dot[2] = theta_dot
+        state_dot[3] = np.sin(theta) / V_1 * (
+                C_21 * g - C_22 * theta ** 2) + D_21 / V_1 * v - D_22 / V_1 * theta_dot - B_2 / V_1 * (
+                           u[0]) - self.model.tau_theta * theta_dot
+
+        state = state + state_dot * self.Ts
+
+        return state
+
+    # ------------------------------------------------------------------------------------------------------------------
+    def _output_function(self, state):
+        output = state['theta']
+        return output
 
 
 class TWIPR_3D_Linear(core.dynamics.LinearDynamics):

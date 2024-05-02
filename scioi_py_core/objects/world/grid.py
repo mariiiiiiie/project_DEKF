@@ -80,7 +80,7 @@ class Grid2D(Grid):
         self.cell_size = cell_size
 
 
-        self.cells = [[None for x in range(cells_x)] for y in range(cells_y)]
+        self.cells = [[None for x in range(cells_y)] for y in range(cells_x)]
         self.origin = origin
 
         pos_0_x = -cell_size * cells_x / 2 + cell_size / 2 - origin[0]

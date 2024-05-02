@@ -124,11 +124,44 @@ class Environment_TransferLearning(EnvironmentBase):
         # self.agent2.input = [-2 * self.joystick.axis[1], -4 * self.joystick.axis[2]]
 
 
+class Environment_TransferLearning_Screenshot(EnvironmentBase):
+    agent1: TWIPR_Agent
+    agent2: TWIPR_Agent
+    obstacle1: CuboidObstacle_3D
+
+    data: dict
+
+    phase: str
+    k: int
+
+    def __init__(self, experiment, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        with open('two_twiprs_ilc.json') as data_file:
+            data = json.load(data_file)
+
+        self.agent1 = TWIPR_Agent(world=self.world, agent_id=1, speed_control=True)
+        self.agent2 = TWIPR_Agent(world=self.world, agent_id=2, speed_control=True)
+
+        self.agent1.setPosition(y=-0.25, x=0)
+        self.agent2.setPosition(y=0.25, x=0)
+
+        fl1 = floor.generateTileFloor(self.world, tiles=[1, 1], tile_size=0.4)
+
+        fl2 = floor.generateTileFloor(self.world, tiles=[1, 1], tile_size=0.4)
+
+        fl1.setPosition(y=-0.25)
+        fl2.setPosition(y=0.25)
+
+        self.phase = 'agent_1'
+        self.k = 0
+
+
 def main():
-    env = Environment_TransferLearning(experiment='direct', visualization='babylon',
-                                       webapp_config={'title': 'Direct Transfer',
-                                                      'record': {'file': 'estimation.webm', 'time': 20},
-                                                      'background': [1, 1, 1]})
+    env = Environment_TransferLearning_Screenshot(experiment='transfer', visualization='babylon',
+                                                  webapp_config={'title': 'Direct Transfer',
+                                                                 'record': {'file': 'transfer.webm', 'time': 20},
+                                                                 'background': [1, 1, 1]})
     setBabylonSettings(background_color=[1, 1, 1])
     env.init()
     env.start()

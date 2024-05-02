@@ -4,13 +4,17 @@ from scioi_py_core.core import spaces as sp
 
 def example_1():
     # Define simple one dimensional dynamics
-    state_space = dynamics.sp.Space(dimensions=['x'])
-    input_space = dynamics.sp.Space(dimensions=['v'])
-    output_space = state_space
-    integrator_spaces = dynamics.DynamicsSpaces(state_space, input_space, output_space)
+    si_state_space = dynamics.sp.Space(dimensions=['x'])
+    si_input_space = dynamics.sp.Space(dimensions=['v'])
+    si_output_space = si_state_space
+    # integrator_spaces = dynamics.DynamicsSpaces(state_space, input_space, output_space)
 
     class Integrator(dynamics.Dynamics):
-        spaces = integrator_spaces
+        nonlocal si_input_space, si_state_space, si_output_space
+        input_space = si_input_space
+        state_space = si_state_space
+        output_space = si_output_space
+
 
         def _output(self, state: sp.State):
             return state

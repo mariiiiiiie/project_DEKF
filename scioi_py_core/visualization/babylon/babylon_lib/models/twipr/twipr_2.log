@@ -1,4 +1,4 @@
-Exporter version: 3.3.0, Blender version: 3.3.1
+Exporter version: 3.3.2, Blender version: 3.3.12
 ========= Conversion from Blender to Babylon.js =========
 	Scene settings used :
 		Inline textures     :  false
@@ -9,19 +9,19 @@ Exporter version: 3.3.0, Blender version: 3.3.1
 		Vert Color Precision:  3
 		Mat Weight Precision:  2
 		Keep Z-up r-handed  :  no
-		Texture directory   :  D:\work_dir\projects\software\python\libraries\scioi-pysim\scioi_py_core\visualization\babylon\babylon_lib\models\twipr\
+		Texture directory   :  J:\work_dir\work_dir\research\software\python\libraries\scioi-pysim\scioi_py_core\visualization\babylon\babylon_lib\models\twipr\
 	Python World class constructor completed
 	WARNING: No active camera has been assigned, or is not in a currently enabled collection
-	processing begun of mesh:  Shape_IndexedFaceSet.008
-		processing begun of material:  Shape.017
-		processing begun of material:  Shape.009
-		processing begun of material:  Shape.010
-		processing begun of material:  Shape.011
-		processing begun of material:  Shape.012
-		processing begun of material:  Shape.013
-		processing begun of material:  Shape.014
-		processing begun of material:  Shape.015
+	processing begun of mesh:  Shape_IndexedFaceSet
 		processing begun of material:  Shape.016
+		processing begun of material:  Shape.017
+		processing begun of material:  Shape.018
+		processing begun of material:  Shape.019
+		processing begun of material:  Shape.020
+		processing begun of material:  Shape.021
+		processing begun of material:  Shape.022
+		processing begun of material:  Shape.023
+		processing begun of material:  Shape.024
 		processing begun of multimaterial:  twipr_2.Multimaterial#0
 		num positions      :  48718
 		num normals        :  48718
@@ -32,7 +32,7 @@ Exporter version: 3.3.0, Blender version: 3.3.1
 		num triangles      :  16996
 		WARNING: # of 0 area faces found:  2152
 ========= Writing of JSON file started =========
-	writing mesh:  Shape_IndexedFaceSet.008
+	writing mesh:  Shape_IndexedFaceSet
 ========= Writing of JSON file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 1.7756 secs
+elapsed time:  0 min, 1.7672 secs
